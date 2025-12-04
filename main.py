@@ -1,26 +1,24 @@
+from src.models.drone.drone import Drone
 from src.models.map.map_generator import MapGenerator
 from src.models.ai.a_star import AStar
-from src.models.map.map_visualizer import MapVisualizer
 
-# generate map
-gen = MapGenerator(width=20, height=20, obstacle_prob=0.15, danger_prob=0.10, seed=42)
-world = gen.generate(survivors=3, drones=2)
+# Generate small map
+gen = MapGenerator(width=10, height=10, obstacle_prob=0.1, danger_prob=0.2, seed=42)
+world = gen.generate(survivors=2, drones=2)
 
-# find path for each drone to first survivor (demo)
-drones = world.list_drones()
-survivors = world.list_survivors()
+drones_pos = world.list_drones()
+survivors_pos = world.list_survivors()
 
-astar = AStar(world, allow_diagonal=True)
-paths = []
-for drone, survivor in zip(drones, survivors):
-    result = astar.find_path(drone, survivor)
-    if result:
-        path, cost = result
-        print(f"Drone {drone} -> Survivor {survivor} path length={len(path)}, cost={cost}")
-        paths.append(path)
-    else:
-        paths.append([])
+# Drone objects
+drones = []
+for i, pos in enumerate(drones_pos):
+    # speed => 0.5–2.0
+    drone = Drone(drone_id=i, start_pos=pos, speed=1.0 + i*0.5, drone_type="search")
+    drones.append(drone)
 
-# visualize
-vis = MapVisualizer(world, paths=paths)
-vis.animate_drones(paths)
+# A* pathfinding
+astar = AStar(world)
+for drone, target in zip(drones, survivors_pos):
+    path, cost = astar.find_path(drone.pos, target)
+    drone.assign_target(target, path)
+    print(f"Drone {drone.drone_id} path to {target}: {path}")
