@@ -16,6 +16,8 @@ class Map:
         self.cost_normal = 1
         self.cost_danger = 5
 
+        self.pheromone = np.zeros((self.height, self.width), dtype=float)
+
     # --------------------------
     # Basic checks
     # --------------------------
@@ -41,6 +43,13 @@ class Map:
             return self.cost_normal
         else:
             return 999999  # not walkable (shouldn't be used)
+    
+    def deposit_pheromone(self, pos, amount=1.0):
+        y, x = pos
+        self.pheromone[y][x] += amount
+
+    def decay_pheromone(self, decay_rate=0.05):
+        self.pheromone *= (1.0 - decay_rate)
 
     # --------------------------
     # Query helpers
