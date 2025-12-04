@@ -5,7 +5,7 @@ from src.models.map.map_visualizer import MapVisualizer
 from src.models.map.map import Map, CellType
 
 # -------------------------------
-# 1️⃣ สร้าง map test case
+# Map test case
 # -------------------------------
 grid = np.zeros((10, 10), dtype=int)
 
@@ -34,7 +34,7 @@ print("Map grid (0=N,1=O,2=D,3=S,4=DR):")
 print(world.grid)
 
 # -------------------------------
-# 2️⃣ A* pathfinding for all drones → all survivors
+# A* pathfinding for all drones → all survivors
 # -------------------------------
 astar = AStar(world, allow_diagonal=True)
 paths = []
@@ -52,7 +52,7 @@ for i, survivor in enumerate(survivors):
         paths.append([])
 
 # -------------------------------
-# 3️⃣ Visualize + Animate
+# Visualize + Animate
 # -------------------------------
 vis = MapVisualizer(world, paths=paths)
 vis.animate_drones(paths)

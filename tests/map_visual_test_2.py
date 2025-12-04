@@ -41,7 +41,7 @@ def generate_random_map(width=20, height=20, obstacle_prob=0.15, danger_prob=0.2
 
     world = Map(grid)
     world.cost_normal = 1
-    world.cost_danger = 3  # เพิ่มให้ danger zone มี cost สูง
+    world.cost_danger = 3  # Make danger zone with high cost
     return world, drones, survivors
 
 
