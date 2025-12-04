@@ -19,7 +19,7 @@ def generate_large_random_map(width=25, height=25, obstacle_prob=0.15, danger_pr
     # Create Drone objects with different speed
     drones = []
     for i, pos in enumerate(drones_pos):
-        speed = round(random.uniform(5, 20.0), 2)
+        speed = round(random.uniform(1, 5.0), 2)
         drone = Drone(drone_id=i, start_pos=pos, speed=speed, drone_type="search")
         drones.append(drone)
 
