@@ -1,19 +1,17 @@
 from math import inf
-from enum import Enum
 import random
 
-class Terrain(Enum):
-    NORMAL = 0
-    OBSTACLE = 1
-    DANGER = 2
+from ..constants import Terrain, DroneState
+from .human import Survivor
+from .drone import Drone
 
 class Map:
     def __init__(self, width, height):
         self.width = width
         self.height = height
         self.grid = [[Terrain.NORMAL for _ in range(width)] for _ in range(height)]
-        self.survivors = []
-        self.drones = []
+        self.survivors: list[Survivor] = []
+        self.drones: list[Drone] = []
         self.terrain_costs = {
             Terrain.NORMAL: 1,
             Terrain.OBSTACLE: inf,
@@ -76,35 +74,32 @@ class Map:
 
     ### Survivors/Drones Related Utilities ###
 
-    # TODO : Implement Survivor and Drone class -- adjusting these functions below if necessary
-
     def add_survivors(self, positions):
-        self.survivors = [
-            {"id": i, "x": x, "y": y, "rescued": False}
+        self.survivors.extend([
+            Survivor(
+                id = i, 
+                x = x, 
+                y = y
+            )
             for i, (x, y) in enumerate(positions)
-        ]
+        ])
 
     def add_drones(self, positions):
-        self.drones = [
-            {
-                "id": i,
-                "startX": x,
-                "startY": y,
-                "x": x,
-                "y": y,
-                "target": None,
-                "path": [],
-                "state": "IDLE",
-                "totalDistance": 0
-            }
+        self.drones.extend([
+            Drone(
+                id = i, 
+                start_x = x,
+                start_y = y,
+                state = DroneState.IDLE
+            )
             for i, (x, y) in enumerate(positions)
-        ]
+        ])
     
     def get_survivor_positions(self):
-        return [(s["x"], s["y"]) for s in self.survivors if not s["rescued"]]
+        return [(s.x, s.y) for s in self.survivors if not s.rescued]
 
     def get_drone_positions(self):
-        return [(d["x"], d["y"]) for d in self.drones]
+        return [(d.current_x, d.current_y) for d in self.drones]
 
     ### Visualization ###
     def display(self):
@@ -115,9 +110,9 @@ class Map:
         }
         grid_copy = [[symbols[self.grid[y][x]] for x in range(self.width)] for y in range(self.height)]
         for s in self.survivors:
-            grid_copy[s["y"]][s["x"]] = "S"
+            grid_copy[s.y][s.x] = "S"
         for d in self.drones:
-            grid_copy[d["y"]][d["x"]] = "D"
+            grid_copy[d.current_y][d.current_x] = "D"
         print("\n".join("".join(row) for row in grid_copy))
 
     def __repr__(self):
