@@ -100,3 +100,17 @@ class MapVisualizer:
             # stop if all drones reached end
             if all(drone.progress >= len(drone.path)-1 for drone in self.drones if drone.path):
                 running = False
+
+    def draw_pheromone(self):
+        if not hasattr(self.world, 'pheromone'):
+            return
+        pheromone = self.world.pheromone
+        max_val = max(pheromone.max(), 1.0)
+        for y in range(self.height):
+            for x in range(self.width):
+                intensity = int(pheromone[y][x] / max_val * 255)
+                if intensity > 0:
+                    overlay = (0, 0, 255, intensity)  # RGBA
+                    s = pygame.Surface((TILE, TILE), pygame.SRCALPHA)
+                    s.fill(overlay)
+                    self.screen.blit(s, (x*TILE, y*TILE))

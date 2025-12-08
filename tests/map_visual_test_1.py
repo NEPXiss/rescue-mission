@@ -2,8 +2,8 @@
 import numpy as np
 from src.models.ai.a_star import AStar
 from src.models.map.map_visualizer import MapVisualizer
-from src.models.map.map import Map
-from src.constants import CellType
+from src.models.map.map import Map, CellType
+from src.models.drone.drone import Drone
 
 # -------------------------------
 # Map test case
@@ -22,9 +22,10 @@ for y, x in survivors:
     grid[y, x] = CellType.SURVIVOR
 
 # Drones
-drones = [(0, 2), (0, 7)]
-for y, x in drones:
-    grid[y, x] = CellType.DRONE
+drone_positions = [(0, 2), (0, 7)]
+drone_objs = []
+for i, pos in enumerate(drone_positions):
+    drone_objs.append(Drone(drone_id=i, start_pos=pos, speed=1.0))
 
 # Create Map instance
 world = Map(grid)
@@ -38,22 +39,20 @@ print(world.grid)
 # A* pathfinding for all drones → all survivors
 # -------------------------------
 astar = AStar(world, allow_diagonal=True)
-paths = []
 
 # Simple round-robin assignment: each survivor gets a drone
 for i, survivor in enumerate(survivors):
-    drone = drones[i % len(drones)]
-    result = astar.find_path(drone, survivor)
+    drone = drone_objs[i % len(drone_objs)]
+    result = astar.find_path(drone.pos, survivor)
     if result:
         path, cost = result
-        print(f"Drone {drone} -> Survivor {survivor}: length={len(path)}, cost={cost}")
-        paths.append(path)
+        drone.assign_target(survivor, path)
+        print(f"Drone {drone.drone_id} -> Survivor {survivor}: length={len(path)}, cost={cost}")
     else:
-        print(f"No path from Drone {drone} -> Survivor {survivor}")
-        paths.append([])
+        print(f"No path from Drone {drone.drone_id} -> Survivor {survivor}")
 
 # -------------------------------
 # Visualize + Animate
 # -------------------------------
-vis = MapVisualizer(world, paths=paths)
-vis.animate_drones(paths)
+vis = MapVisualizer(world, drones=drone_objs)
+vis.animate_drones()
