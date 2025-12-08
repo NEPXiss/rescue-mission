@@ -1,4 +1,4 @@
-from .terrain import Terrain
 from .dronestate import DroneState
+from .cell_type import CellType
 
-__all__ = ["Terrain", "DroneState"]
+__all__ = ["CellType", "DroneState"]

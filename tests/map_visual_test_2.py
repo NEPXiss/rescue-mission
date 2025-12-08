@@ -2,7 +2,8 @@
 import numpy as np
 from src.models.ai.a_star import AStar
 from src.models.map.map_visualizer import MapVisualizer
-from src.models.map.map import Map, CellType
+from src.models.map.map import Map
+from src.constants import CellType
 import random
 
 # -------------------------------
