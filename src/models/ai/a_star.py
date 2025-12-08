@@ -2,7 +2,8 @@
 import heapq
 import math
 from typing import List, Tuple, Optional, Dict
-from src.models.map.map import Map, CellType
+from src.models.map.map import Map
+from src.constants import CellType
 
 Coord = Tuple[int, int]
 

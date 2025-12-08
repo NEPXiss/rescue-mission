@@ -1,6 +1,7 @@
 import numpy as np
 import random
-from .map import Map, CellType
+from .map import Map
+from src.constants import CellType
 
 class MapGenerator:
     def __init__(self, width=20, height=20,

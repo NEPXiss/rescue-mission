@@ -1,11 +1,5 @@
 import numpy as np
-
-class CellType:
-    NORMAL = 0
-    OBSTACLE = 1
-    DANGER = 2
-    SURVIVOR = 3
-    DRONE = 4
+from src.constants import CellType
 
 class Map:
     def __init__(self, grid: np.ndarray):
