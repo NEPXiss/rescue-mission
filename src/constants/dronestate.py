@@ -1,6 +1,8 @@
 from enum import Enum
 
-class DroneState(Enum):
+class DroneState:
     IDLE = 0
-    BUSY = 1
-    CRASH = 2
+    TRAVELING = 1
+    AT_TARGET = 2
+    RETURNING = 3
+    SEARCHING = 4

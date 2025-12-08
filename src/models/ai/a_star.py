@@ -9,10 +9,6 @@ Coord = Tuple[int, int]
 
 class AStar:
     def __init__(self, world: Map, allow_diagonal: bool = False):
-        """
-        world: instance of Map (map.map.Map)
-        allow_diagonal: if True, allow 8-way moves (diagonals).
-        """
         self.world = world
         self.allow_diagonal = allow_diagonal
 
@@ -21,7 +17,7 @@ class AStar:
         self._diagonals = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
 
     def heuristic(self, a: Coord, b: Coord) -> float:
-        """Heuristic: Manhattan for 4-way, Euclidean for 8-way"""
+        # Heuristic: Manhattan for 4-way, Euclidean for 8-way
         (y1, x1), (y2, x2) = a, b
         dy = abs(y1 - y2)
         dx = abs(x1 - x2)
@@ -31,10 +27,8 @@ class AStar:
             return dy + dx
 
     def neighbors(self, node: Coord) -> List[Tuple[Coord, float]]:
-        """
-        Return list of (neighbor_coord, move_cost_multiplier)
-        move_cost_multiplier is 1 for orthogonal, sqrt(2) for diagonal
-        """
+        # Return list of (neighbor_coord, move_cost_multiplier)
+        # move_cost_multiplier is 1 for orthogonal, sqrt(2) for diagonal
         y, x = node
         res = []
 

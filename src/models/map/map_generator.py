@@ -1,3 +1,4 @@
+# map_generator.py
 import numpy as np
 import random
 from .map import Map
