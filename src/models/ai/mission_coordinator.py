@@ -48,6 +48,9 @@ class MissionCoordinator:
         self.next_spawn_time = 0
         self.drone_id_counter = 0
         
+        # NEW: Event history for animation
+        self.event_history: List[Dict] = []
+        
     # =========================================
     # Initialize Mission
     # =========================================
@@ -192,6 +195,18 @@ class MissionCoordinator:
                 if new_cost < current_cost * 0.5:
                     print(f"Re-assigning Drone {drone.drone_id}: {current_target} -> {new_survivor} "
                           f"(cost {current_cost:.1f} -> {new_cost:.1f})")
+                    
+                    # NEW: Record reassignment event
+                    self.event_history.append({
+                        'time': self.current_time,
+                        'type': 'reassign',
+                        'drone_id': drone.drone_id,
+                        'old_target': current_target,
+                        'new_target': new_survivor,
+                        'old_cost': current_cost,
+                        'new_cost': new_cost
+                    })
+                    
                     # Cancel previous assignment
                     del self.assignments[drone.drone_id]
                     # Assign new target
@@ -233,12 +248,29 @@ class MissionCoordinator:
                         self.discovered_survivors.add(pos)
                         print(f"  🔍 Drone {drone.drone_id} discovered survivor at {pos}!")
                         
+                        # NEW: Record discovery event
+                        self.event_history.append({
+                            'time': self.current_time,
+                            'type': 'discovery',
+                            'drone_id': drone.drone_id,
+                            'survivor_pos': pos
+                        })
+                        
         return discovered
         
     def check_rescue(self, drone: Drone):
         """Check if drone has reached its target survivor"""
         if drone.target and drone.pos == drone.target:
             self.rescued_survivors.add(drone.target)
+            
+            # NEW: Record rescue event
+            self.event_history.append({
+                'time': self.current_time,
+                'type': 'rescue',
+                'drone_id': drone.drone_id,
+                'survivor_pos': drone.target
+            })
+            
             if drone.drone_id in self.assignments:
                 del self.assignments[drone.drone_id]
             drone.target = None
@@ -273,6 +305,14 @@ class MissionCoordinator:
             drone = self.spawn_drone(speed=new_drone_speed)
             self.next_spawn_time = self.current_time + self.drone_spawn_delay
             step_log['spawned'] = drone.drone_id
+            
+            # NEW: Record spawn event
+            self.event_history.append({
+                'time': self.current_time,
+                'type': 'spawn',
+                'drone_id': drone.drone_id,
+                'speed': new_drone_speed
+            })
             
         # 2. Move all drones
         for drone in self.drones:
@@ -324,3 +364,8 @@ class MissionCoordinator:
         """Check if all known survivors have been rescued"""
         total_known = self.known_survivors | self.discovered_survivors
         return len(self.rescued_survivors) >= len(total_known)
+    
+    # NEW: Get events for current time
+    def get_events_at_time(self, time: int):
+        """Get all events that occurred at specific time"""
+        return [e for e in self.event_history if e['time'] == time]
