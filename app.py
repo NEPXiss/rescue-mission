@@ -240,7 +240,7 @@ def run_simulation(
         print(f"  Survivors per unit distance: {status['rescued_survivors'] / total_distance:.4f}")
     print(f"  Average time per rescue: {status['time'] / max(status['rescued_survivors'], 1):.1f} steps")
     
-    print("\nFinal Map (text):")
+    # print("\nFinal Map (text):")
     # print_map_with_drones(world, coordinator)
     
     # Save final map image
