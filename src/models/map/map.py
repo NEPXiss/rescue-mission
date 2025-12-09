@@ -1,3 +1,4 @@
+# map.py
 import numpy as np
 from src.constants import CellType
 

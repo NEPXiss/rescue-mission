@@ -1,0 +1,206 @@
+
+============================================================
+AI RESCUE MISSION SIMULATION
+============================================================
+
+Map Configuration:
+  Size: 25x25
+  Spawn point: (0, 0)
+  Known survivors (initial): 8
+  Hidden survivors: 5
+  Total survivors: 13
+
+Mission Parameters:
+  Detection radius: 3
+  Drone spawn delay: 5
+  Max drones: 20
+Mission initialized with 8 known survivors
+
+============================================================
+STARTING SIMULATION
+============================================================
+
+--- Step 0 ---
+  🚁 Spawned Drone 0 (speed: 0.82)
+  📍 Drone 0 -> (9, 0) (ETA: 33.1 steps)
+  Status: 0/8 rescued, 1 drones deployed, 1 active assignments
+
+--- Step 5 ---
+  🚁 Spawned Drone 1 (speed: 1.30)
+  📍 Drone 1 -> (11, 5) (ETA: 25.4 steps)
+  Status: 0/8 rescued, 2 drones deployed, 2 active assignments
+
+--- Step 10 ---
+  🚁 Spawned Drone 2 (speed: 1.41)
+  📍 Drone 2 -> (15, 14) (ETA: 36.7 steps)
+  Status: 0/8 rescued, 3 drones deployed, 3 active assignments
+  🔍 Drone 1 discovered survivor at (9, 7)!
+  🔍 Drone 1 discovered survivor at (10, 5)!
+
+--- Step 12 ---
+  🔍 Discovered 2 survivor(s): [(9, 7), (10, 5)]
+  Status: 0/10 rescued, 3 drones deployed, 3 active assignments
+Map saved to rescue_step_012.png
+  📸 Saved visualization: rescue_step_012.png
+
+--- Step 13 ---
+  ✅ Drone 0 rescued survivor at (9, 0)
+  📍 Drone 0 -> (10, 5) (ETA: 12.5 steps)
+  Status: 1/10 rescued, 3 drones deployed, 3 active assignments
+Map saved to rescue_step_013.png
+  📸 Saved visualization: rescue_step_013.png
+
+--- Step 14 ---
+  ✅ Drone 1 rescued survivor at (11, 5)
+  📍 Drone 1 -> (9, 7) (ETA: 9.2 steps)
+  Status: 2/10 rescued, 3 drones deployed, 3 active assignments
+Map saved to rescue_step_014.png
+  📸 Saved visualization: rescue_step_014.png
+
+--- Step 15 ---
+  🚁 Spawned Drone 3 (speed: 0.95)
+  📍 Drone 3 -> (19, 9) (ETA: 56.6 steps)
+  Status: 2/10 rescued, 4 drones deployed, 4 active assignments
+
+--- Step 18 ---
+  ✅ Drone 1 rescued survivor at (9, 7)
+  📍 Drone 1 -> (24, 16) (ETA: 22.7 steps)
+  Status: 3/10 rescued, 4 drones deployed, 4 active assignments
+Map saved to rescue_step_018.png
+  📸 Saved visualization: rescue_step_018.png
+
+--- Step 20 ---
+  🚁 Spawned Drone 4 (speed: 1.04)
+  ✅ Drone 0 rescued survivor at (10, 5)
+  📍 Drone 0 -> (22, 4) (ETA: 43.7 steps)
+  📍 Drone 4 -> (23, 18) (ETA: 67.9 steps)
+  Status: 4/10 rescued, 5 drones deployed, 5 active assignments
+Map saved to rescue_step_020.png
+  📸 Saved visualization: rescue_step_020.png
+
+--- Step 25 ---
+  🚁 Spawned Drone 5 (speed: 1.45)
+  ✅ Drone 2 rescued survivor at (15, 14)
+  📍 Drone 2 -> (20, 24) (ETA: 16.5 steps)
+  Status: 5/10 rescued, 6 drones deployed, 5 active assignments
+Map saved to rescue_step_025.png
+  📸 Saved visualization: rescue_step_025.png
+  🔍 Drone 1 discovered survivor at (22, 17)!
+
+--- Step 28 ---
+  🔍 Discovered 1 survivor(s): [(22, 17)]
+  📍 Drone 5 -> (22, 17) (ETA: 49.3 steps)
+  Status: 5/11 rescued, 6 drones deployed, 6 active assignments
+Map saved to rescue_step_028.png
+  📸 Saved visualization: rescue_step_028.png
+
+--- Step 30 ---
+  🚁 Spawned Drone 6 (speed: 1.05)
+  Status: 5/11 rescued, 7 drones deployed, 6 active assignments
+
+--- Step 32 ---
+  ✅ Drone 1 rescued survivor at (24, 16)
+  Status: 6/11 rescued, 7 drones deployed, 5 active assignments
+Map saved to rescue_step_032.png
+  📸 Saved visualization: rescue_step_032.png
+
+--- Step 35 ---
+  🚁 Spawned Drone 7 (speed: 1.49)
+  ✅ Drone 2 rescued survivor at (20, 24)
+  Status: 7/11 rescued, 8 drones deployed, 4 active assignments
+Map saved to rescue_step_035.png
+  📸 Saved visualization: rescue_step_035.png
+
+--- Step 37 ---
+  ✅ Drone 3 rescued survivor at (19, 9)
+  Status: 8/11 rescued, 8 drones deployed, 3 active assignments
+Map saved to rescue_step_037.png
+  📸 Saved visualization: rescue_step_037.png
+  🔍 Drone 4 discovered survivor at (0, 18)!
+Re-assigning Drone 4: (23, 18) -> (0, 18) (cost 33.2 -> 13.5)
+
+--- Step 40 ---
+  🚁 Spawned Drone 8 (speed: 1.38)
+  🔍 Discovered 1 survivor(s): [(0, 18)]
+  📍 Drone 1 -> (23, 18) (ETA: 4.9 steps)
+  Status: 8/12 rescued, 9 drones deployed, 4 active assignments
+Map saved to rescue_step_040.png
+  📸 Saved visualization: rescue_step_040.png
+
+--- Step 42 ---
+  ✅ Drone 1 rescued survivor at (23, 18)
+  Status: 9/12 rescued, 9 drones deployed, 3 active assignments
+Map saved to rescue_step_042.png
+  📸 Saved visualization: rescue_step_042.png
+
+--- Step 44 ---
+  ✅ Drone 0 rescued survivor at (22, 4)
+  Status: 10/12 rescued, 9 drones deployed, 2 active assignments
+Map saved to rescue_step_044.png
+  📸 Saved visualization: rescue_step_044.png
+
+--- Step 45 ---
+  🚁 Spawned Drone 9 (speed: 1.28)
+  Status: 10/12 rescued, 10 drones deployed, 2 active assignments
+
+--- Step 46 ---
+  ✅ Drone 4 rescued survivor at (0, 18)
+  Status: 11/12 rescued, 10 drones deployed, 1 active assignments
+Map saved to rescue_step_046.png
+  📸 Saved visualization: rescue_step_046.png
+
+--- Step 50 ---
+  🚁 Spawned Drone 10 (speed: 1.12)
+  Status: 11/12 rescued, 11 drones deployed, 1 active assignments
+
+--- Step 55 ---
+  🚁 Spawned Drone 11 (speed: 1.03)
+  Status: 11/12 rescued, 12 drones deployed, 1 active assignments
+
+--- Step 58 ---
+  ✅ Drone 5 rescued survivor at (22, 17)
+  Status: 12/12 rescued, 12 drones deployed, 0 active assignments
+Map saved to rescue_step_058.png
+  📸 Saved visualization: rescue_step_058.png
+
+============================================================
+🎉 MISSION COMPLETE!
+============================================================
+
+============================================================
+MISSION SUMMARY
+============================================================
+
+Performance Metrics:
+  Total time: 59 steps
+  Drones deployed: 12
+
+Survivor Statistics:
+  Initially known: 8
+  Discovered during mission: 4
+  Total found: 12
+  Successfully rescued: 12
+  Remaining: 0
+
+Success Rate: 100.0%
+
+Efficiency Metrics:
+  Total distance traveled: 223.7
+  Survivors per unit distance: 0.0536
+  Average time per rescue: 4.9 steps
+
+📸 Final map saved as: rescue_final.png
+
+Discovery Analysis:
+  Hidden survivors: 5
+  Actually discovered: 4
+
+Discovery Analysis:
+  Hidden survivors: 5
+  Actually discovered: 4
+  Never found: 1
+  Hidden survivors: 5
+  Actually discovered: 4
+  Never found: 1
+  Never found: 1
+  Locations not found: {(6, 23)}
