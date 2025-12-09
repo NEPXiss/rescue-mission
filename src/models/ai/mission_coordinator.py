@@ -8,9 +8,11 @@ from src.models.ai.a_star import AStar
 Coord = Tuple[int, int]
 
 class MissionCoordinator:
-    # Dynamic Task Assignment for Drone Rescue Mission
-    # Use A* for pathfinding and greedy assignment strategy
-    # Re-plan when new survivors are discovered
+    """
+    Dynamic Task Assignment for Drone Rescue Mission
+    Use A* for pathfinding and greedy assignment strategy
+    Re-plan when new survivors are discovered
+    """
     
     def __init__(
         self,
@@ -34,6 +36,10 @@ class MissionCoordinator:
         self.rescued_survivors: Set[Coord] = set()
         self.discovered_survivors: Set[Coord] = set()
         
+        # IMPORTANT: Track ALL survivors in the map (including hidden ones)
+        # This is used to prevent pathfinding issues
+        self.all_survivors_in_map: Set[Coord] = set()
+        
         # Assignments: drone_id -> target_survivor
         self.assignments: Dict[int, Coord] = {}
         
@@ -46,14 +52,22 @@ class MissionCoordinator:
     # Initialize Mission
     # =========================================
     def initialize_mission(self, initial_survivors: List[Coord]):
+        """Initialize mission with known survivors"""
         self.known_survivors = set(initial_survivors)
         print(f"Mission initialized with {len(initial_survivors)} known survivors")
+        
+    def set_all_survivors(self, all_survivors: List[Coord]):
+        """
+        Set all survivors in map (including hidden ones)
+        This is needed for internal bookkeeping but won't affect task assignment
+        """
+        self.all_survivors_in_map = set(all_survivors)
         
     # =========================================
     # Spawn Drone
     # =========================================
     def spawn_drone(self, speed: float = 1.0):
-        # Spwan Drone at spawn_point
+        """Spawn Drone at spawn_point"""
         drone = Drone(
             drone_id=self.drone_id_counter,
             start_pos=self.spawn_point,
@@ -68,11 +82,16 @@ class MissionCoordinator:
     # Task Assignment
     # =========================================
     def assign_tasks(self):
-        # Allocate available drones to unassigned survivors by greedy method
-        # Calculate cost of each drone-survivor pair
-        # Assign drones to survivors with lowest cost first
-
+        """
+        Allocate available drones to unassigned survivors by greedy method
+        Calculate cost of each drone-survivor pair
+        Assign drones to survivors with lowest cost first
+        
+        IMPORTANT: Only assign to survivors that are known or discovered!
+        """
         # Find all survivors that need rescue (not assigned and not rescued)
+        # CRITICAL: Only use known_survivors and discovered_survivors
+        # Do NOT use all_survivors_in_map here!
         available_survivors = (
             self.known_survivors | self.discovered_survivors
         ) - self.rescued_survivors
@@ -94,7 +113,7 @@ class MissionCoordinator:
             best_path = None
             
             for survivor in available_survivors:
-                # Skip if survivor if assigned
+                # Skip if survivor is already assigned
                 if survivor in self.assignments.values():
                     continue
                     
@@ -124,19 +143,26 @@ class MissionCoordinator:
     # Re-planning
     # =========================================
     def replan_if_needed(self):
-        # Replan if there are unassigned survivors (newly discovered) or idle drones
-        # Check if there's unassigned survivor.
+        """
+        Replan if there are unassigned survivors (newly discovered) or idle drones
+        Check if there's unassigned survivor.
+        """
+        # Check if there's unassigned survivor
         unassigned = (
             self.known_survivors | self.discovered_survivors
         ) - self.rescued_survivors - set(self.assignments.values())
         
         if unassigned:
             # If there's unassigned survivor
-            # Consider re-assign drones with high cost targets.
+            # Consider re-assign drones with high cost targets
             self.reassign_drones()
             
     def reassign_drones(self):
-        # Find unassigned survivors
+        """
+        Re-assign drones to optimize mission time
+        Consider canceling long-distance assignments for closer newly-discovered survivors
+        """
+        # Find unassigned survivors (only known or discovered!)
         unassigned = (
             self.known_survivors | self.discovered_survivors
         ) - self.rescued_survivors - set(self.assignments.values())
@@ -156,15 +182,16 @@ class MissionCoordinator:
             current_cost = current_result[1] / drone.speed
             
             # Find better cost survivor
-            for new_survivor in unassigned:
+            for new_survivor in list(unassigned):  # Convert to list to allow removal
                 new_result = self.astar.find_path(drone.pos, new_survivor)
                 if new_result is None:
                     continue
                 new_cost = new_result[1] / drone.speed
                 
-                # Re-assign if new cost under threshold (threshold 50%)
+                # Re-assign if new cost is significantly better (threshold 50%)
                 if new_cost < current_cost * 0.5:
-                    print(f"Re-assigning Drone {drone.drone_id}: {current_target} -> {new_survivor}")
+                    print(f"Re-assigning Drone {drone.drone_id}: {current_target} -> {new_survivor} "
+                          f"(cost {current_cost:.1f} -> {new_cost:.1f})")
                     # Cancel previous assignment
                     del self.assignments[drone.drone_id]
                     # Assign new target
@@ -177,6 +204,10 @@ class MissionCoordinator:
     # Detection
     # =========================================
     def check_detection(self, drone: Drone):
+        """
+        Check if drone discovers new survivors within detection radius
+        Returns list of newly discovered survivor positions
+        """
         dy, dx = drone.pos
         discovered = []
         
@@ -184,23 +215,28 @@ class MissionCoordinator:
                        min(self.world.height, dy + self.detection_radius + 1)):
             for x in range(max(0, dx - self.detection_radius),
                           min(self.world.width, dx + self.detection_radius + 1)):
+                # Check if within circular radius
                 dist = math.sqrt((y - dy)**2 + (x - dx)**2)
                 if dist > self.detection_radius:
                     continue
                     
                 pos = (y, x)
-                # Found new survivor
+                
+                # Found new survivor that we didn't know about before
                 if (pos not in self.known_survivors and 
                     pos not in self.discovered_survivors and
                     pos not in self.rescued_survivors):
+                    
                     from src.constants import CellType
                     if self.world.grid[y][x] == CellType.SURVIVOR:
                         discovered.append(pos)
                         self.discovered_survivors.add(pos)
+                        print(f"  🔍 Drone {drone.drone_id} discovered survivor at {pos}!")
                         
         return discovered
         
     def check_rescue(self, drone: Drone):
+        """Check if drone has reached its target survivor"""
         if drone.target and drone.pos == drone.target:
             self.rescued_survivors.add(drone.target)
             if drone.drone_id in self.assignments:
@@ -214,6 +250,15 @@ class MissionCoordinator:
     # Simulation Step
     # =========================================
     def step(self, spawn_new_drone: bool = True, new_drone_speed: float = 1.0):
+        """
+        Run one simulation step
+        Order of operations:
+        1. Spawn new drone if needed
+        2. Move all drones
+        3. Check detection and rescue
+        4. Re-plan if new survivors discovered
+        5. Assign tasks to available drones
+        """
         step_log = {
             'time': self.current_time,
             'spawned': False,
@@ -223,33 +268,34 @@ class MissionCoordinator:
             'assigned': []
         }
         
-        # Spawn new drone
+        # 1. Spawn new drone
         if spawn_new_drone and self.current_time >= self.next_spawn_time:
             drone = self.spawn_drone(speed=new_drone_speed)
             self.next_spawn_time = self.current_time + self.drone_spawn_delay
             step_log['spawned'] = drone.drone_id
             
-        # Move all drones
+        # 2. Move all drones
         for drone in self.drones:
             old_pos = drone.pos
             new_pos = drone.move_step()
             if old_pos != new_pos:
                 step_log['moved'].append((drone.drone_id, old_pos, new_pos))
                 
-            # Detection check
+            # 3. Detection check
             discovered = self.check_detection(drone)
             if discovered:
                 step_log['discovered'].extend(discovered)
                 
-            # Rescue check
+            # 4. Rescue check
             if self.check_rescue(drone):
                 step_log['rescued'].append((drone.drone_id, drone.pos))
                 
-        # Re-plan if new survivors discovered
+        # 5. Re-plan if new survivors discovered
         if step_log['discovered']:
             self.replan_if_needed()
             
-        # Assign tasks to available drones
+        # 6. Assign tasks to available drones
+        # This will only assign to known_survivors + discovered_survivors
         assignments = self.assign_tasks()
         if assignments:
             step_log['assigned'] = assignments
@@ -261,6 +307,7 @@ class MissionCoordinator:
     # Status
     # =========================================
     def get_status(self):
+        """Get current mission status"""
         total_known = len(self.known_survivors | self.discovered_survivors)
         return {
             'time': self.current_time,
@@ -274,5 +321,6 @@ class MissionCoordinator:
         }
         
     def is_mission_complete(self):
+        """Check if all known survivors have been rescued"""
         total_known = self.known_survivors | self.discovered_survivors
         return len(self.rescued_survivors) >= len(total_known)
