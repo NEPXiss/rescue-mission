@@ -153,7 +153,7 @@ def run_simulation(
         spawn_new = len(coordinator.drones) < max_drones
         
         # Drone speed (0.8 - 1.5)
-        drone_speed = random.uniform(0.8, 1.5)
+        drone_speed = random.uniform(0.8, 5)
         
         # Run 1 step
         log = coordinator.step(spawn_new_drone=spawn_new, new_drone_speed=drone_speed)
@@ -318,8 +318,8 @@ def run_simulation(
 if __name__ == "__main__":
     # Run simulation with all visualization options
     coordinator, world = run_simulation(
-        map_width=30,
-        map_height=30,
+        map_width=25,
+        map_height=25,
         num_initial_survivors=10,
         num_hidden_survivors=5,
         detection_radius=4,
@@ -330,5 +330,5 @@ if __name__ == "__main__":
         visualize=True,           # Save frame images
         save_final_map=True,      # Save final map
         create_animation=True,    # Create video animations
-        output_dir='examples/ex4' # Output directory
+        output_dir='examples/ex5' # Output directory
     )
